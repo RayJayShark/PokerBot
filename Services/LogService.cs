@@ -2,9 +2,9 @@ using System;
 
 namespace PokerBot.Services
 {
-    public static class LogService
+    public class LogService
     {
-        public static void GameLog(string log)
+        public void GameLog(string log)
         {
             Console.WriteLine(GetTimestamp() + " Game\t     " + log);
         }
