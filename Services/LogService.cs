@@ -12,7 +12,7 @@ namespace PokerBot.Services
         private static string GetTimestamp()
         {
             var currentTime = DateTime.Now;
-            return $"{currentTime.Hour:D2}:{currentTime.Minute:D2}:{currentTime.Second:D2}";
+            return $"{currentTime.Year}-{currentTime.Month:D2}-{currentTime.Day:D2} {currentTime.Hour:D2}:{currentTime.Minute:D2}:{currentTime.Second:D2}";
         }
     }
 }
