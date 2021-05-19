@@ -1,12 +1,18 @@
 using System;
+using PokerBot.Models;
 
 namespace PokerBot.Services
 {
     public class LogService
     {
-        public void GameLog(string log)
+        public void WriteLog(Log log)
         {
-            Console.WriteLine(GetTimestamp() + " Game\t     " + log);
+            Console.WriteLine(GetTimestamp() + $" - {log.LogSeverity} - {log.LogContent}");
+            
+            if (log.StoredException != null)
+            {
+                Console.WriteLine("\t" + log.StoredException.StackTrace);
+            }
         }
     
         private static string GetTimestamp()
