@@ -1,7 +1,7 @@
 using System;
 using Discord;
 
-namespace PokerBot.Classes
+namespace PokerBot.Models
 {
     public struct Card
     {

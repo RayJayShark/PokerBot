@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using PokerBot.Classes;
 
 namespace PokerBot.Models.Logs
 {
@@ -31,7 +29,7 @@ namespace PokerBot.Models.Logs
 
         public override string ToString()
         {
-            return $"'Player {PlayerName}' ({PlayerId}), {LogContent}";
+            return $"Player '{PlayerName}' ({PlayerId}), {LogContent}";
         }
     }
 }

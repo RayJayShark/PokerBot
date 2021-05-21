@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PokerBot.Classes
+namespace PokerBot.Models
 {
     public class Deck
     {

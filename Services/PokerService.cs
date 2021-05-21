@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using PokerBot.Classes;
+using PokerBot.Models;
 
 
 namespace PokerBot.Services

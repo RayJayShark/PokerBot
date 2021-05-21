@@ -1,6 +1,6 @@
 using System;
 
-namespace PokerBot.Classes
+namespace PokerBot.Models
 {
     public class Hand
     {
