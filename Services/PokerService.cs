@@ -49,9 +49,9 @@ namespace PokerBot.Services
         {
             Console.WriteLine("Service test good");
         }
-        
-        // Pregame
-        
+
+        #region PreGame
+
         public async Task NewGame(SocketCommandContext context) 
         {
             if (_gameState == States.Pregame)
@@ -206,10 +206,10 @@ namespace PokerBot.Services
             _dealer = 0;
             await context.Channel.SendMessageAsync("Game has ended.");
         }
-        
-        // Ingame
-            
-            // Helpers
+        #endregion
+
+        #region Ingame
+            #region Helpers
 
         private async Task DealHands(SocketMessage message)
         {
@@ -292,8 +292,9 @@ namespace PokerBot.Services
 
             return nextPlayer == _playerToMatch;
         }
-        
-            // Gameplay
+            #endregion
+
+            #region Gameplay
 
         private async Task StartRound(SocketMessage message)
         {
@@ -608,5 +609,7 @@ namespace PokerBot.Services
             IncrementDealer();
             await DealHands(message);
         }
+            #endregion
+        #endregion
     }
 }
