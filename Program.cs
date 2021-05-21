@@ -9,6 +9,8 @@ using Discord.WebSocket;
 using dotenv.net;
 using PokerBot.Services;
 using Microsoft.Extensions.DependencyInjection;
+using PokerBot.Models;
+using PokerBot.Models.Logs;
 
 
 namespace PokerBot
@@ -17,6 +19,7 @@ namespace PokerBot
     {
         private static DiscordSocketClient _client;
         private static CommandService _commands;
+        private static LogService _logService;
         private static IServiceProvider _services;
 
         private static void Main(string[] arg) => new Program().MainAsync().GetAwaiter().GetResult();
@@ -41,9 +44,12 @@ namespace PokerBot
             await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DISCORD_TOKEN"));
             await _client.StartAsync();
 
+            _logService = new LogService();
+            
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(new PokerService())
+                .AddSingleton(_logService)
                 .BuildServiceProvider();
 
             _commands = new CommandService();
@@ -67,24 +73,24 @@ namespace PokerBot
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
 
-            int argPos = 0;
+            var argPos = 0;
 
-            char prefix;
-            try
-            {
-                prefix = Environment.GetEnvironmentVariable("COMMAND_PREFIX")[0];
-            }
-            catch (Exception ex)
-            {
-                prefix = '+';
-            }
-            
+            var prefix = (Environment.GetEnvironmentVariable("COMMAND_PREFIX") ?? "+")[0];
+
             if (!(message.HasCharPrefix(prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos)) || message.Author.IsBot)
                 return;
-            
+
             var context = new SocketCommandContext(_client, message);
 
-            await _commands.ExecuteAsync(context: context, argPos: argPos, services: _services);
+            var result = await _commands.ExecuteAsync(context: context, argPos: argPos, services: _services);
+            
+            // Log command
+            _logService.WriteLog(new CommandLog(
+                message.Author,
+                message.Content.Substring(0, message.Content.IndexOf(' ')),
+                result.IsSuccess ? LogObject.Severity.Info : LogObject.Severity.Warning,
+                message.Content
+            ));
         }
 
         private static async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after,
