@@ -11,7 +11,7 @@ namespace PokerBot.Services
 {
     public class PokerService
     {
-        private enum States
+        public enum States
         {
             Closed,
             Pregame,
