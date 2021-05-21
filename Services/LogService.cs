@@ -7,7 +7,7 @@ namespace PokerBot.Services
     {
         public void WriteLog(LogObject log)
         {
-            Console.WriteLine(GetTimestamp() + $" - {log.LogSeverity} - {log.LogContent}");
+            Console.WriteLine(GetTimestamp() + $" - {log.LogSeverity} - {log}");
             
             if (log.StoredException != null)
             {
