@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PokerBot.Models
+namespace PokerBot.Models.Logs
 {
-    public class Log
+    public abstract class LogObject
     {
         public enum Severity
         {
@@ -20,17 +20,5 @@ namespace PokerBot.Models
         public string LogContent { get; set; }
         public Exception? StoredException { get; set; }
 
-
-        public Log(Severity logSeverity, string logContent)
-        {
-            LogSeverity = logSeverity;
-            LogContent = logContent;
-        }
-
-        public Log(Severity logSeverity, string logContent, Exception exception) {
-            LogSeverity = logSeverity;
-            LogContent = logContent;
-            StoredException = exception;
-        }
     }
 }

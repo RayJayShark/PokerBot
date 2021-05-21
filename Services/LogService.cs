@@ -1,11 +1,11 @@
 using System;
-using PokerBot.Models;
+using PokerBot.Models.Logs;
 
 namespace PokerBot.Services
 {
     public class LogService
     {
-        public void WriteLog(Log log)
+        public void WriteLog(LogObject log)
         {
             Console.WriteLine(GetTimestamp() + $" - {log.LogSeverity} - {log.LogContent}");
             
