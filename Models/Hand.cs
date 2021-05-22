@@ -5,10 +5,9 @@ namespace PokerBot.Classes
     public class Hand
     {
         private Card[] cards;
-        private int score;
-        private int rank0 = 0;
-        private int rank1 = 0;
-        private int rank2 = 0;
+        private int scoreTierOne;   // Type of hand
+        private int scoreTierTwo;   // Hand rank
+        private int scoreTierThree; // High card 
 
         public Hand(Card[] cards)
         {

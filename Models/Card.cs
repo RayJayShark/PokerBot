@@ -78,12 +78,7 @@ namespace PokerBot.Classes
 
         public bool Equals(Card card)
         {
-            if (String.CompareOrdinal(_suit, card._suit) == 1 && _value == card._value)
-            {
-                return true;
-            }
-
-            return false;
+            return _value == card._value;
         }
     }
 }
