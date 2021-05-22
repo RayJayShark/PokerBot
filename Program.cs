@@ -48,7 +48,7 @@ namespace PokerBot
             
             _services = new ServiceCollection()
                 .AddSingleton(_client)
-                .AddSingleton(new PokerService())
+                .AddSingleton(new PokerService(_logService))
                 .AddSingleton(_logService)
                 .BuildServiceProvider();
 
