@@ -3,7 +3,7 @@ using Discord;
 
 namespace PokerBot.Classes
 {
-    public struct Card
+    public struct Card: IComparable<Card>
     {
         private readonly string _suit;
         private readonly int _value;
@@ -58,7 +58,17 @@ namespace PokerBot.Classes
         {
             return _suit;
         }
-        
+
+        public int CompareTo(Card card)
+        {
+            if (_value < card._value)
+            {
+                return -1;
+            }
+
+            return _value == card._value ? 0 : 1;
+        }
+
         public override string ToString()
         {
             switch (_value)
