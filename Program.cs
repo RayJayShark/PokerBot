@@ -33,6 +33,35 @@ namespace PokerBot
             }
             DotEnv.Config(false);
 
+            var logLevel = Environment.GetEnvironmentVariable("LOG_LEVEL");
+
+            while (_logService == null) 
+            {
+                if (string.IsNullOrEmpty(logLevel))
+                {
+                    Console.Write("Please provide a logging level of INFO, WARNING, or ERROR: ");
+                    logLevel = Console.ReadLine();
+                }
+                
+                
+                switch (logLevel?.ToLower())
+                {
+                    case "info":
+                        _logService = new LogService(LogObject.Severity.Info);
+                        break;
+                    case "warning":
+                        _logService = new LogService(LogObject.Severity.Warning);
+                        break;
+                    case "error":
+                        _logService = new LogService(LogObject.Severity.Error);
+                        break;
+                    default:
+                        logLevel = null;
+                        Console.WriteLine("Please enter a valid logging level");
+                        break;
+                }
+            } 
+
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Verbose,
@@ -44,8 +73,6 @@ namespace PokerBot
             await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DISCORD_TOKEN"));
             await _client.StartAsync();
 
-            _logService = new LogService();
-            
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(new PokerService(_logService))

@@ -5,10 +5,18 @@ namespace PokerBot.Services
 {
     public class LogService
     {
+        private readonly LogObject.Severity _logLevel;
+
+        public LogService(LogObject.Severity logLevel)
+        {
+            _logLevel = logLevel;
+        }
+        
         public void WriteLog(LogObject log)
         {
+            if (log.LogSeverity > _logLevel) return;
             Console.WriteLine(GetTimestamp() + $" - {log.LogSeverity} - {log}");
-            
+
             if (log.StoredException != null)
             {
                 Console.WriteLine("\t" + log.StoredException.StackTrace);
