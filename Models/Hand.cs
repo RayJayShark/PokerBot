@@ -63,7 +63,31 @@ namespace PokerBot.Classes
         private void CheckFlushStraight()
         {
             var flush = cards.All(card => card.GetSuit() == cards[0].GetSuit());
-            //var straight = 
+            var straight = true;
+            for (var i = 4; i > 1; i++)
+            {
+                if (cards[i].GetValue() - cards[i - 1].GetValue() != 1)
+                    straight = false;
+            }
+            
+            //Royal Flush
+            if (flush && straight && cards[4].GetValue() == 13)
+            {
+                scoreTierOne = 9;
+                return;
+            }
+            // Flush
+            else if (flush)
+            {
+                scoreTierOne = 5;
+            }
+            //Straight
+            else if (straight)
+            {
+                scoreTierOne = 4;
+            }
+
+            scoreTierThree = cards[4].GetValue();
         }
 
     }
