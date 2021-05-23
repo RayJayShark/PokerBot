@@ -114,7 +114,6 @@ namespace PokerBot
             // Log command
             _logService.WriteLog(new CommandLog(
                 message.Author,
-                message.Content.Substring(0, message.Content.IndexOf(' ')),
                 result.IsSuccess ? LogObject.Severity.Info : LogObject.Severity.Warning,
                 message.Content
             ));

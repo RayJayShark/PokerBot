@@ -11,19 +11,17 @@ namespace PokerBot.Models.Logs
     class CommandLog : LogObject
     {
         public IUser User { get; set; }
-        public string Command { get; set; }
 
-        public CommandLog(IUser user, string command, Severity severity, string content)
+        public CommandLog(IUser user, Severity severity, string content)
         {
             User = user;
-            Command = command;
             LogSeverity = severity;
             LogContent = content;
         }
 
         public override string ToString() 
         {
-            return $"User '{User.Username}' executed command '{Command}' with message: {LogContent}";
+            return $"User '{User.Username}' executed command with message: {LogContent}";
         }
     }
 }
