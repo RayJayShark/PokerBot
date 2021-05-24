@@ -12,7 +12,7 @@ namespace PokerBot.Classes
 
         public Card(string suit, int value)
         {
-            if (value < 1 || value > 13)
+            if (value < 2 || value > 14)
             {
                 throw new Exception("Index for card out of bounds.");
             }
@@ -71,19 +71,14 @@ namespace PokerBot.Classes
 
         public override string ToString()
         {
-            switch (_value)
+            return _value switch
             {
-                case 1:
-                    return "A" + _emoji;
-                case 11:
-                    return "J" + _emoji;
-                case 12:
-                    return "Q" + _emoji;
-                case 13:
-                    return "K" + _emoji;
-                default:
-                    return $"{_value}{_emoji}";
-            }
+                11 => "J" + _emoji,
+                12 => "Q" + _emoji,
+                13 => "K" + _emoji,
+                14 => "A" + _emoji,
+                _ => $"{_value}{_emoji}"
+            };
         }
     }
 }
