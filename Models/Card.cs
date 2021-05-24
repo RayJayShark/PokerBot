@@ -85,10 +85,5 @@ namespace PokerBot.Classes
                     return $"{_value}{_emoji}";
             }
         }
-
-        public bool Equals(Card card)
-        {
-            return _value == card._value;
-        }
     }
 }

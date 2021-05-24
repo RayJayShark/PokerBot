@@ -40,24 +40,15 @@ namespace PokerBot.Classes
             // Sort cards for better comparing
             cards.Sort();
             
-            CheckFlushStraight();
+            CheckFlushStraight();   // Checks for a flush, straight, or related hand
             
-            // Pair
-            var pair = new int[2];
-            var next = false;
-            for (var i = 0; i < 4; i++)
+            if (scoreTierOne > 0)
             {
-                for (var j = i + 1; j < 5; j++)
-                {
-                    if (cards[i].GetValue() == cards[j].GetValue())
-                    {
-                        next = true;
-                        pair[0] = i;
-                        pair[1] = j;
-                        break;
-                    }
-                }
+                return;
             }
+
+            CheckForMatches();      // Checks for pair, three of a kind, four of a kind, and full house
+
         }
 
         private void CheckFlushStraight()
@@ -71,13 +62,13 @@ namespace PokerBot.Classes
             }
             
             //Royal Flush
-            if (flush && straight && cards[4].GetValue() == 13)
+            if (flush && straight)
             {
-                scoreTierOne = 9;
+                scoreTierOne = cards[4].GetValue() == 13 ? 9 : 8;   // Checks for straight flush
                 return;
             }
             // Flush
-            else if (flush)
+            if (flush)
             {
                 scoreTierOne = 5;
             }
@@ -88,6 +79,66 @@ namespace PokerBot.Classes
             }
 
             scoreTierThree = cards[4].GetValue();
+        }
+        private void CheckForMatches() 
+        {
+            // Four of a kind
+            if (cards[0].GetValue() == cards[3].GetValue())
+            {
+                scoreTierOne = 7;
+                scoreTierTwo = cards[0].GetValue();
+                scoreTierThree = cards[4].GetValue();
+                return;
+            }
+            if (cards[1].GetValue() == cards[4].GetValue())
+            {
+                scoreTierOne = 7;
+                scoreTierTwo = cards[1].GetValue();
+                scoreTierThree = cards[0].GetValue();
+                return;
+            }
+            
+            //Three of a kind
+            if (cards[0].GetValue() == cards[2].GetValue())
+            {
+                if (cards[3].GetValue() == cards[4].GetValue())
+                {
+                    scoreTierOne = 6;                       // Full House
+                    scoreTierTwo = cards[0].GetValue();
+                    scoreTierThree = cards[3].GetValue();
+                }
+                else
+                {
+                    scoreTierOne = 3;                       // Three of a kind
+                    scoreTierTwo = cards[0].GetValue();
+                    scoreTierThree = cards[4].GetValue();
+                }
+
+                return;
+            }
+
+            if (cards[2].GetValue() == cards[4].GetValue()) 
+            {
+                if (cards[0].GetValue() == cards[1].GetValue()) 
+                {
+                    scoreTierOne = 6;                       // Full House
+                    scoreTierTwo = cards[2].GetValue();
+                    scoreTierThree = cards[0].GetValue();
+                }
+                else 
+                {
+                    scoreTierOne = 3;                       // Three of a kind
+                    scoreTierTwo = cards[2].GetValue();
+                    scoreTierThree = cards[1].GetValue();
+                }
+
+                return;
+            }
+            
+            //Pairs
+            var pairs = 0;
+
+
         }
 
     }
