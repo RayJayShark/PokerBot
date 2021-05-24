@@ -10,6 +10,7 @@ namespace PokerBot.Classes
         private int scoreTierOne;   // Type of hand
         private int scoreTierTwo;   // Hand rank
         private int scoreTierThree; // High card 
+        private int scoreTierFour;  // High card for two pairs
 
         public Hand(ICollection<Card> cards)
         {
@@ -136,8 +137,46 @@ namespace PokerBot.Classes
             }
             
             //Pairs
-            var pairs = 0;
+            var pairLoc = new List<int>();
+            for (var i = 0; i < 4; i++)
+            {
+                if (cards[i].GetValue() == cards[i + 1].GetValue())
+                {
+                    pairLoc.Add(i);
+                }
+            }
 
+            if (pairLoc.Count == 2)             // Two pairs
+            {
+                scoreTierOne = 2;
+                scoreTierThree = cards[pairLoc[0]].GetValue();
+                scoreTierTwo = cards[pairLoc[1]].GetValue();
+                if (pairLoc[0] == 1)
+                {
+                    scoreTierFour = cards[0].GetValue();
+                }
+                else if (pairLoc[1] == 2)
+                {
+                    scoreTierFour = cards[4].GetValue();
+                }
+                else
+                {
+                    scoreTierFour = cards[2].GetValue();
+                }
+
+                return;
+            }
+
+            if (pairLoc.Count == 1)             // One pair
+            {
+                scoreTierOne = 1;
+                scoreTierTwo = cards[pairLoc[0]].GetValue();
+                scoreTierThree = pairLoc[0] == 3 ? cards[2].GetValue() : cards[4].GetValue();   // High card
+            }
+            else
+            {
+                scoreTierTwo = cards[4].GetValue();
+            }
 
         }
 
