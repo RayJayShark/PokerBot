@@ -36,13 +36,15 @@ namespace PokerBot.Services
         private int _currentPlayer;
         private int _playerToMatch;
         private int _call;
+        private SqlService _sqlService;
 
-        public PokerService()
+        public PokerService(SqlService sqlService)
         {
             _gameState = States.Closed;
             _playerList = new List<PokerPlayer>();
             _foldedPlayers = new List<PokerPlayer>();
             _river = new Card[5];
+            _sqlService = sqlService;
         }
 
         public void Test()
@@ -69,7 +71,13 @@ namespace PokerBot.Services
             }
 
             var user = (IGuildUser) context.User;
-            _playerList.Add(new PokerPlayer(user.Id, user.Nickname));
+            var player = await _sqlService.GetPlayerAsync(user.Id);
+            if (player == null)
+            {
+                player = new PokerPlayer(user.Id, user.Nickname);
+                await _sqlService.AddPlayerAsync(player);
+            }
+            _playerList.Add(player);
             _gameState = States.Pregame;
             await context.Channel.SendMessageAsync(
                 $"New game started! New players can join with \"{Environment.GetEnvironmentVariable("COMMAND_PREFIX")}joingame\" and the game can be started with \"{Environment.GetEnvironmentVariable("COMMAND_PREFIX")}start\"!");
@@ -104,7 +112,12 @@ namespace PokerBot.Services
             }
             
             var user = (IGuildUser) context.User;
-            var player = new PokerPlayer(user.Id, user.Nickname ?? user.Username);
+            var player = await _sqlService.GetPlayerAsync(user.Id);
+            if (player == null) 
+            {
+                player = new PokerPlayer(user.Id, user.Nickname);
+                await _sqlService.AddPlayerAsync(player);
+            }
 
             foreach (var p in _playerList)
             {
@@ -114,7 +127,7 @@ namespace PokerBot.Services
                     return;
                 }
             }
-            
+
             _playerList.Add(player);
             await context.Channel.SendMessageAsync($"Welcome to the game {player.GetName()}!");
         }

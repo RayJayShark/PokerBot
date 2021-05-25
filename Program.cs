@@ -42,14 +42,15 @@ namespace PokerBot
             await _client.StartAsync();
 
             var env = Environment.GetEnvironmentVariables();
+            var sqlService = new SqlService($"server ={env["DB_SERVER"]}; " +
+                                            $"port={env["DB_PORT"]};" +
+                                            $"database={env["DB_NAME"]};" +
+                                            $"user={env["DB_USER"]};" +
+                                            $"password={env["DB_PASS"]}");
             _services = new ServiceCollection()
                 .AddSingleton(_client)
-                .AddSingleton(new PokerService())
-                .AddSingleton(new SqlService($"server ={ env["DB_SERVER"] }; " +
-                    $"port={env["DB_PORT"]};" +
-                    $"database={env["DB_NAME"]};" +
-                    $"user={env["DB_USER"]};" +
-                    $"password={env["DB_PASS"]}"))
+                .AddSingleton(new PokerService(sqlService))
+                .AddSingleton(sqlService)
                 .BuildServiceProvider();
 
             _commands = new CommandService();

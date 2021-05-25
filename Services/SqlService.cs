@@ -9,7 +9,7 @@ using PokerBot.Classes;
 
 namespace PokerBot.Services
 {
-    class SqlService
+    public class SqlService
     {
         private readonly MySqlConnection connection;
 
@@ -22,7 +22,20 @@ namespace PokerBot.Services
         {
             connection.Open();
 
-            return await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE discordId = @id", id);
+            var player = await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE discordId = @id", id);
+
+            await connection.CloseAsync();
+
+            return player;
+        }
+
+        public async Task AddPlayerAsync(PokerPlayer player)
+        {
+            connection.Open();
+
+            await connection.ExecuteAsync("INSERT INTO player (discordId, username) VALUES(@id, @name)", player);
+
+            await connection.CloseAsync();
         }
     }
 }

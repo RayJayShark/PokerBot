@@ -8,6 +8,8 @@ namespace PokerBot.Classes
         private ulong id;
         private string name;
         private int money;
+        private uint wins;
+        private uint losses;
         private int totalCall;
         private HoleHand _holeHand;
         private IDMChannel _dmChannel;
@@ -20,7 +22,18 @@ namespace PokerBot.Classes
             var g = Program.GetGuild(ulong.Parse(Environment.GetEnvironmentVariable("GUILD_ID")));
             var u = g.GetUser(id);
             _dmChannel = u.GetOrCreateDMChannelAsync().Result;
-            
+        }
+
+        public PokerPlayer(ulong id, string name, uint wins, uint losses) 
+        {
+            this.id = id;
+            this.name = name;
+            this.wins = wins;
+            this.losses = losses;
+            totalCall = 0;
+            var g = Program.GetGuild(ulong.Parse(Environment.GetEnvironmentVariable("GUILD_ID")));
+            var u = g.GetUser(id);
+            _dmChannel = u.GetOrCreateDMChannelAsync().Result;
         }
 
         public void GiveHand(Card[] cards)
