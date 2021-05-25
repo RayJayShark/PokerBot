@@ -41,9 +41,15 @@ namespace PokerBot
             await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DISCORD_TOKEN"));
             await _client.StartAsync();
 
+            var env = Environment.GetEnvironmentVariables();
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(new PokerService())
+                .AddSingleton(new SqlService($"server ={ env["DB_SERVER"] }; " +
+                    $"port={env["DB_PORT"]};" +
+                    $"database={env["DB_NAME"]};" +
+                    $"user={env["DB_USER"]};" +
+                    $"password={env["DB_PASS"]}"))
                 .BuildServiceProvider();
 
             _commands = new CommandService();
