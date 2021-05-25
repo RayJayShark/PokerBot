@@ -50,14 +50,6 @@ namespace PokerBot
             _commands = new CommandService();
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
-            var test = new Hand(
-                new Card("c", 5),
-                new Card("c", 2),
-                new Card("c", 1),
-                new Card("c", 9),
-                new Card("c", 12)
-            );
-            
             _client.MessageUpdated += MessageUpdated;
             _client.MessageReceived += HandleCommandAsync;
 

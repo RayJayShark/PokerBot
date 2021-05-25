@@ -23,6 +23,11 @@ namespace PokerBot.Classes
             }
         }
 
+        public Card[] GetCards()
+        {
+            return _cards;
+        }
+
         public override string ToString()
         {
             return $"{_cards[0].ToString()}, {_cards[1].ToString()}";

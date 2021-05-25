@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PokerBot.Classes
 {
-    public class Hand
+    public class Hand : IComparable<Hand>
     {
         private readonly List<Card> cards;
         private int scoreTierOne;   // Type of hand
@@ -36,6 +36,14 @@ namespace PokerBot.Classes
             CalculateScore();
         }
 
+        public Hand()
+        {
+            scoreTierOne = 0;
+            scoreTierTwo = 0;
+            scoreTierThree = 0;
+            scoreTierFour = 0;
+        }
+
         public void CalculateScore()
         {
             // Sort cards for better comparing
@@ -56,7 +64,7 @@ namespace PokerBot.Classes
         {
             var flush = cards.All(card => card.GetSuit() == cards[0].GetSuit());
             var straight = true;
-            for (var i = 4; i > 1; i++)
+            for (var i = 4; i > 1; i--)
             {
                 if (cards[i].GetValue() - cards[i - 1].GetValue() != 1)
                     straight = false;
@@ -178,6 +186,47 @@ namespace PokerBot.Classes
                 scoreTierTwo = cards[4].GetValue();
             }
 
+        }
+
+        public int CompareTo(Hand hand)
+        {
+            if (scoreTierOne > hand.scoreTierOne)
+            {
+                return 1;
+            }
+            if (scoreTierOne < hand.scoreTierOne)
+            {
+                return -1;
+            }
+
+            if (scoreTierTwo > hand.scoreTierTwo) 
+            {
+                return 1;
+            }
+            if (scoreTierTwo < hand.scoreTierTwo) 
+            {
+                return -1;
+            }
+
+            if (scoreTierThree > hand.scoreTierThree) 
+            {
+                return 1;
+            }
+            if (scoreTierThree < hand.scoreTierThree) 
+            {
+                return -1;
+            }
+
+            if (scoreTierFour > hand.scoreTierFour) 
+            {
+                return 1;
+            }
+            if (scoreTierFour < hand.scoreTierFour) 
+            {
+                return -1;
+            }
+
+            return 0;
         }
 
     }

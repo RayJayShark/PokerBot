@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Sources;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using PokerBot.Classes;
+using PokerBot.Utilities;
 
 
 namespace PokerBot.Services
@@ -461,7 +465,52 @@ namespace PokerBot.Services
                     Program.AddMessageEvent(PlayRound);
                     return;
                 case States.Showdown:
-                    // TODO: Make algorithm to compare hands
+                    var hands = new List<List<Hand>>();     // All possible hands for each player
+                    var handTasks = new List<Task>();
+                    foreach (var player in _playerList)
+                    {
+                        var cards = new List<Card>(_river);
+                        cards.AddRange(player.GetHand().GetCards());
+                        handTasks.Add(Task.Run(() => hands.Add(Combinations.FindCombinations(cards))));
+                    }
+
+                    Task.WaitAll(handTasks.ToArray());
+                    
+                    var scoringTasks = new List<Task>();
+                    foreach (var pHands in hands)
+                    {
+                        foreach (var hand in pHands)
+                        {
+                            scoringTasks.Add(Task.Run(() => hand.CalculateScore()));
+                        }
+                    }
+                    
+                    Task.WaitAll(scoringTasks.ToArray());
+
+                    var bestHands = new List<Hand>();
+                    foreach (var pHands in hands)
+                    {
+                        pHands.Sort();
+                        bestHands.Add(pHands.Last());
+                    }
+
+                    var winners = new List<int> { 0 };
+                    for (var i = 1; i < bestHands.Count; i++)
+                    {
+                        var comp = bestHands[i].CompareTo(bestHands[winners[0]]);
+                        switch (comp)
+                        {
+                            case > 0:
+                                winners = new List<int>(i);
+                                break;
+                            case 0:
+                                winners.Add(i);
+                                break;
+                        }
+                    }
+
+                    await WinPot(message, winners);
+                    
                     return;
             }
         }
@@ -494,7 +543,7 @@ namespace PokerBot.Services
 
                                 winner = i;
                             }
-                            await WinPot(message, winner);
+                            await WinPot(message, new List<int>(winner));
                             return;
                         }
                         await message.Channel.SendMessageAsync(_playerList[_currentPlayer].GetName() + " folds. Onto the next stage...");
@@ -522,7 +571,7 @@ namespace PokerBot.Services
 
                                 winner = i;
                             }
-                            await WinPot(message, winner);
+                            await WinPot(message, new List<int>(winner));
                             return;
                         }
                     }
@@ -590,10 +639,28 @@ namespace PokerBot.Services
             await StartRound(message);
         }
 
-        private async Task WinPot(SocketMessage message, int player)
+        private async Task WinPot(SocketMessage message, List<int> players)
         {
-            _playerList[player].GiveMoney(_pot);
-            await message.Channel.SendMessageAsync($"{_playerList[player].GetName()} won this round with a pot of {_pot}!");
+            if (players.Count == 1)
+            {
+                _playerList[players[0]].GiveMoney(_pot);
+                await message.Channel.SendMessageAsync(
+                    $"{_playerList[players[0]].GetName()} won this round with a pot of {_pot}!");
+            }
+            else
+            {
+                var splitPot = _pot / players.Count;
+                var winners = "";
+                foreach (var p in players)
+                {
+                    _playerList[p].GiveMoney(splitPot);
+                    winners += $"{_playerList[p].GetName()}, ";
+                }
+
+                await message.Channel.SendMessageAsync(
+                    $"{winners.Substring(0, winners.Length - 1)} have tied and split the pot, getting {splitPot} each!");
+            }
+
             _pot = 0;
             _currentPlayer = 0;
             _gameState = States.Beginning;
