@@ -37,5 +37,15 @@ namespace PokerBot.Services
 
             await connection.CloseAsync();
         }
+
+        public async Task UpdatePlayersAsync(IEnumerable<PokerPlayer> players)
+        {
+            connection.Open();
+
+            await connection.ExecuteAsync(
+                "UPDATE player SET money = @money, wins = @wins, losses = @losses WHERE discordId = id", players);
+
+            await connection.CloseAsync();
+        }
     }
 }

@@ -607,6 +607,21 @@ namespace PokerBot.Services
         {
             _playerList[player].GiveMoney(_pot);
             await message.Channel.SendMessageAsync($"{_playerList[player].GetName()} won this round with a pot of {_pot}!");
+
+            for (var i = 0; i < _playerList.Count; i++)
+            {
+                if (i == player)
+                {
+                    _playerList[player].AddWin();
+                }
+                else
+                {
+                    _playerList[i].AddLoss();
+                }
+            }
+
+            await _sqlService.UpdatePlayersAsync(_playerList);
+            
             _pot = 0;
             _currentPlayer = 0;
             _gameState = States.Beginning;

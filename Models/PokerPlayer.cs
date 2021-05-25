@@ -61,6 +61,26 @@ namespace PokerBot.Classes
             return money;
         }
 
+        public uint GetWins()
+        {
+            return wins;
+        }
+
+        public uint GetLosses()
+        {
+            return losses;
+        }
+
+        public void AddWin()
+        {
+            wins++;
+        }
+
+        public void AddLoss()
+        {
+            losses++;
+        }
+
         public void GiveMoney(int amount)
         {
             money += amount;
