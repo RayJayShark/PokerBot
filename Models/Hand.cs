@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ namespace PokerBot.Classes
     public class Hand : IComparable<Hand>
     {
         private readonly List<Card> cards;
+        private string? handName;
         private int scoreTierOne;   // Type of hand
         private int scoreTierTwo;   // Hand rank
         private int scoreTierThree; // High card 
@@ -44,6 +46,11 @@ namespace PokerBot.Classes
             scoreTierFour = 0;
         }
 
+        public string? GetHandName()
+        {
+            return handName;
+        }
+        
         public void CalculateScore()
         {
             // Sort cards for better comparing
@@ -70,21 +77,34 @@ namespace PokerBot.Classes
                     straight = false;
             }
             
-            //Royal Flush
             if (flush && straight)
             {
-                scoreTierOne = cards[4].GetValue() == 13 ? 9 : 8;   // Checks for straight flush
+                //Royal Flush
+                if (cards[4].GetValue() == 14)
+                {
+                    scoreTierOne = 9;
+                    handName = "A Royal Flush";
+                    return;
+                }
+
+                //Straight Flush
+                scoreTierOne = 8;  
+                scoreTierTwo = cards[4].GetValue();
+                handName = "A Straight Flush";
+                
                 return;
             }
             // Flush
             if (flush)
             {
                 scoreTierOne = 5;
+                handName = "A Flush";
             }
             //Straight
             else if (straight)
             {
                 scoreTierOne = 4;
+                handName = "A Straight";
             }
 
             scoreTierThree = cards[4].GetValue();
@@ -97,6 +117,7 @@ namespace PokerBot.Classes
                 scoreTierOne = 7;
                 scoreTierTwo = cards[0].GetValue();
                 scoreTierThree = cards[4].GetValue();
+                handName = "Four of a Kind";
                 return;
             }
             if (cards[1].GetValue() == cards[4].GetValue())
@@ -104,6 +125,8 @@ namespace PokerBot.Classes
                 scoreTierOne = 7;
                 scoreTierTwo = cards[1].GetValue();
                 scoreTierThree = cards[0].GetValue();
+                handName = "Four of a Kind";
+
                 return;
             }
             
@@ -115,12 +138,14 @@ namespace PokerBot.Classes
                     scoreTierOne = 6;                       // Full House
                     scoreTierTwo = cards[0].GetValue();
                     scoreTierThree = cards[3].GetValue();
+                    handName = "A Full House";
                 }
                 else
                 {
                     scoreTierOne = 3;                       // Three of a kind
                     scoreTierTwo = cards[0].GetValue();
                     scoreTierThree = cards[4].GetValue();
+                    handName = "Three of a Kind";
                 }
 
                 return;
@@ -133,12 +158,14 @@ namespace PokerBot.Classes
                     scoreTierOne = 6;                       // Full House
                     scoreTierTwo = cards[2].GetValue();
                     scoreTierThree = cards[0].GetValue();
+                    handName = "A Full House";
                 }
                 else 
                 {
                     scoreTierOne = 3;                       // Three of a kind
                     scoreTierTwo = cards[2].GetValue();
                     scoreTierThree = cards[1].GetValue();
+                    handName = "Three of a Kind";
                 }
 
                 return;
@@ -156,6 +183,8 @@ namespace PokerBot.Classes
 
             if (pairLoc.Count == 2)             // Two pairs
             {
+                handName = "Two Pair";
+                
                 scoreTierOne = 2;
                 scoreTierThree = cards[pairLoc[0]].GetValue();
                 scoreTierTwo = cards[pairLoc[1]].GetValue();
@@ -177,6 +206,7 @@ namespace PokerBot.Classes
 
             if (pairLoc.Count == 1)             // One pair
             {
+                handName = "A Pair";
                 scoreTierOne = 1;
                 scoreTierTwo = cards[pairLoc[0]].GetValue();
                 scoreTierThree = pairLoc[0] == 3 ? cards[2].GetValue() : cards[4].GetValue();   // High card
@@ -184,6 +214,7 @@ namespace PokerBot.Classes
             else
             {
                 scoreTierTwo = cards[4].GetValue();
+                handName = "High Card";
             }
 
         }

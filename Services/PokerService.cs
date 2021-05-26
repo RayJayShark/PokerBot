@@ -495,21 +495,24 @@ namespace PokerBot.Services
                     }
 
                     var winners = new List<int> { 0 };
+                    var winnerHands = new List<string>();
                     for (var i = 1; i < bestHands.Count; i++)
                     {
                         var comp = bestHands[i].CompareTo(bestHands[winners[0]]);
                         switch (comp)
                         {
                             case > 0:
-                                winners = new List<int>(i);
+                                winners = new List<int> { i };
+                                winnerHands = new List<string> { bestHands[i].GetHandName() };
                                 break;
                             case 0:
                                 winners.Add(i);
+                                winnerHands.Add(bestHands[i].GetHandName());
                                 break;
                         }
                     }
 
-                    await WinPot(message, winners);
+                    await WinPot(message, winners, winnerHands);
                     
                     return;
             }
@@ -543,7 +546,7 @@ namespace PokerBot.Services
 
                                 winner = i;
                             }
-                            await WinPot(message, new List<int>(winner));
+                            await WinPot(message, new List<int>{ winner }, new List<string> { "folding" });
                             return;
                         }
                         await message.Channel.SendMessageAsync(_playerList[_currentPlayer].GetName() + " folds. Onto the next stage...");
@@ -571,7 +574,7 @@ namespace PokerBot.Services
 
                                 winner = i;
                             }
-                            await WinPot(message, new List<int>(winner));
+                            await WinPot(message, new List<int> {winner}, new List<string> { "folding" });
                             return;
                         }
                     }
@@ -639,13 +642,13 @@ namespace PokerBot.Services
             await StartRound(message);
         }
 
-        private async Task WinPot(SocketMessage message, List<int> players)
+        private async Task WinPot(SocketMessage message, List<int> players, List<string> hands)
         {
             if (players.Count == 1)
             {
                 _playerList[players[0]].GiveMoney(_pot);
                 await message.Channel.SendMessageAsync(
-                    $"{_playerList[players[0]].GetName()} won this round with a pot of {_pot}!");
+                    $"{_playerList[players[0]].GetName()} won the pot of {_pot} with {hands[0]}!");
             }
             else
             {
@@ -658,7 +661,8 @@ namespace PokerBot.Services
                 }
 
                 await message.Channel.SendMessageAsync(
-                    $"{winners.Substring(0, winners.Length - 1)} have tied and split the pot, getting {splitPot} each!");
+                    $"{winners.Substring(0, winners.Length - 1)} have tied and split the pot, getting {splitPot} each!\n" +
+                    $"They had {hands[0]} and {hands[1]}");
             }
 
             _pot = 0;
