@@ -51,7 +51,7 @@ namespace PokerBot.Classes
             return handName;
         }
         
-        public void CalculateScore()
+        private void CalculateScore()
         {
             // Sort cards for better comparing
             cards.Sort();
@@ -64,7 +64,7 @@ namespace PokerBot.Classes
             }
 
             CheckForMatches();      // Checks for pair, three of a kind, four of a kind, and full house
-
+            return;
         }
 
         private void CheckFlushStraight()
@@ -73,7 +73,7 @@ namespace PokerBot.Classes
             var straight = true;
             for (var i = 4; i > 1; i--)
             {
-                if (cards[i].GetValue() - cards[i - 1].GetValue() != 1)
+                if (cards[i].GetValue() - cards[i - 1].GetValue() != 1 && cards[i].GetValue() - cards[i - 1].GetValue() != 9)
                     straight = false;
             }
             
@@ -107,7 +107,7 @@ namespace PokerBot.Classes
                 handName = "A Straight";
             }
 
-            scoreTierThree = cards[4].GetValue();
+            scoreTierTwo = cards[4].GetValue();
         }
         private void CheckForMatches() 
         {
@@ -168,6 +168,15 @@ namespace PokerBot.Classes
                     handName = "Three of a Kind";
                 }
 
+                return;
+            }
+
+            if (cards[1].GetValue() == cards[3].GetValue())
+            {
+                scoreTierOne = 3;                       // Three of a kind
+                scoreTierTwo = cards[1].GetValue();
+                scoreTierThree = cards[4].GetValue();
+                handName = "Three of a Kind";
                 return;
             }
             

@@ -475,17 +475,6 @@ namespace PokerBot.Services
                     }
 
                     Task.WaitAll(handTasks.ToArray());
-                    
-                    var scoringTasks = new List<Task>();
-                    foreach (var pHands in hands)
-                    {
-                        foreach (var hand in pHands)
-                        {
-                            scoringTasks.Add(Task.Run(() => hand.CalculateScore()));
-                        }
-                    }
-                    
-                    Task.WaitAll(scoringTasks.ToArray());
 
                     var bestHands = new List<Hand>();
                     foreach (var pHands in hands)
