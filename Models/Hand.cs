@@ -38,6 +38,26 @@ namespace PokerBot.Classes
             CalculateScore();
         }
 
+        public int GetScoreOne()
+        {
+            return scoreTierOne;
+        }
+
+        public int GetScoreTwo()
+        {
+            return scoreTierTwo;
+        }
+        
+        public int GetScoreThree()
+        {
+            return scoreTierThree;
+        }
+        
+        public int GetScoreFour()
+        {
+            return scoreTierFour;
+        }
+        
         public string? GetHandName()
         {
             return handName;
