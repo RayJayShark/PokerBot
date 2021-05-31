@@ -38,14 +38,6 @@ namespace PokerBot.Classes
             CalculateScore();
         }
 
-        public Hand()
-        {
-            scoreTierOne = 0;
-            scoreTierTwo = 0;
-            scoreTierThree = 0;
-            scoreTierFour = 0;
-        }
-
         public string? GetHandName()
         {
             return handName;
@@ -64,7 +56,7 @@ namespace PokerBot.Classes
             }
 
             CheckForMatches();      // Checks for pair, three of a kind, four of a kind, and full house
-            return;
+
         }
 
         private void CheckFlushStraight()

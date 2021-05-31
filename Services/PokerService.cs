@@ -465,17 +465,22 @@ namespace PokerBot.Services
                     Program.AddMessageEvent(PlayRound);
                     return;
                 case States.Showdown:
+                    
                     var hands = new List<List<Hand>>();     // All possible hands for each player
+                    
+                    // Tasks finding possible hands
                     var handTasks = new List<Task>();
                     foreach (var player in _playerList)
                     {
                         var cards = new List<Card>(_river);
                         cards.AddRange(player.GetHand().GetCards());
-                        handTasks.Add(Task.Run(() => hands.Add(Combinations.FindCombinations(cards))));
+                        handTasks.Add(Task.Run(() => hands.Add(Combinations.FindCombinations(cards)))); // Scores are calculated in constructor
                     }
 
+                    // Wait for all hands to be created and scored
                     Task.WaitAll(handTasks.ToArray());
 
+                    // Find best hand for each player
                     var bestHands = new List<Hand>();
                     foreach (var pHands in hands)
                     {
@@ -483,6 +488,7 @@ namespace PokerBot.Services
                         bestHands.Add(pHands.Last());
                     }
 
+                    // Find winner or winners
                     var winners = new List<int> { 0 };
                     var winnerHands = new List<string>();
                     for (var i = 1; i < bestHands.Count; i++)
@@ -501,6 +507,7 @@ namespace PokerBot.Services
                         }
                     }
 
+                    // Give winners the money, send winning message
                     await WinPot(message, winners, winnerHands);
                     
                     return;
