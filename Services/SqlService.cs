@@ -22,7 +22,18 @@ namespace PokerBot.Services
         {
             connection.Open();
 
-            var player = await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE discordId = @id", id);
+            var player = await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE discordId = @id", new { id });
+
+            await connection.CloseAsync();
+
+            return player;
+        }
+        
+        public async Task<PokerPlayer> GetPlayerAsync(string playerName)
+        {
+            connection.Open();
+
+            var player = await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE username = @playerName", new { playerName });
 
             await connection.CloseAsync();
 
