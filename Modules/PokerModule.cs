@@ -60,6 +60,8 @@ namespace PokerBot.Modules
         public async Task GetStats(string playerName = null)
         {
             PokerPlayer player;
+            
+            //Get player from database
             if (string.IsNullOrEmpty(playerName))
             {
                 player = await _sqlService.GetPlayerAsync(Context.User.Id);
@@ -69,12 +71,14 @@ namespace PokerBot.Modules
                 player = await _sqlService.GetPlayerAsync(playerName);
             }
 
+            //Player doesn't exist in database
             if (player == null)
             {
                 await ReplyAsync("This player does not exist, so they doesn't have stats. :/");
                 return;
             }
 
+            //Build message
             var embedBuilder = new EmbedBuilder
             {
                 Color = Color.Magenta,
