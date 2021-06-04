@@ -75,6 +75,7 @@ namespace PokerBot.Services
             if (player == null)
             {
                 player = new PokerPlayer(user.Id, user.Nickname);
+                player.GiveMoney(100);
                 await _sqlService.AddPlayerAsync(player);
             }
             _playerList.Add(player);
@@ -116,6 +117,7 @@ namespace PokerBot.Services
             if (player == null) 
             {
                 player = new PokerPlayer(user.Id, user.Nickname);
+                player.GiveMoney(100);
                 await _sqlService.AddPlayerAsync(player);
             }
 
@@ -191,10 +193,6 @@ namespace PokerBot.Services
 
             _gameState = States.Beginning;
             _deck = new Deck();
-            foreach (var player in _playerList)
-            {
-                player.GiveMoney(100);        //TODO: Change to env variable
-            }
 
             await DealHands(context.Message);
         }
