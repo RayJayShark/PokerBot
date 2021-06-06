@@ -5,11 +5,11 @@ namespace PokerBot.Classes
 {
     public class PokerPlayer
     {
-        private ulong id;
-        private string name;
-        private int money;
-        private uint wins;
-        private uint losses;
+        public ulong id { get; set; } 
+        public string name { get; set; } 
+        public int money { get; set; } 
+        public uint wins { get; set; } 
+        public uint losses { get; set; } 
         private int totalCall;
         private HoleHand _holeHand;
         private IDMChannel _dmChannel;

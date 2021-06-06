@@ -74,7 +74,7 @@ namespace PokerBot.Modules
             //Player doesn't exist in database
             if (player == null)
             {
-                await ReplyAsync("This player does not exist, so they doesn't have stats. :/");
+                await ReplyAsync("This player does not exist, so they don't have stats. :/");
                 return;
             }
 

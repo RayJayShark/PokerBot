@@ -22,31 +22,61 @@ namespace PokerBot.Services
         {
             connection.Open();
 
-            var player = await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE discordId = @id", new { id });
+            try
+            {
+                return
+                    await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE discordId = @id",
+                        new {id});
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
 
-            await connection.CloseAsync();
-
-            return player;
         }
         
         public async Task<PokerPlayer> GetPlayerAsync(string playerName)
         {
             connection.Open();
 
-            var player = await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE username = @playerName", new { playerName });
-
-            await connection.CloseAsync();
-
-            return player;
+            try
+            {
+                return
+                    await connection.QuerySingleAsync<PokerPlayer>("SELECT * FROM player WHERE username = @playerName",
+                        new {playerName});
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
         }
 
         public async Task AddPlayerAsync(PokerPlayer player)
         {
             connection.Open();
 
-            await connection.ExecuteAsync("INSERT INTO player (discordId, username) VALUES(@id, @name)", player);
-
-            await connection.CloseAsync();
+            try
+            {
+                await connection.ExecuteAsync("INSERT INTO player (discordId, username) VALUES(@id, @name)", player);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
         }
 
         public async Task UpdatePlayersAsync(IEnumerable<PokerPlayer> players)
