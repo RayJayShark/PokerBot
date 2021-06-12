@@ -33,6 +33,7 @@ namespace PokerBot.Services
         };
 
         private LogService _logService;
+        private SqlService _sqlService;
         
         private States _gameState;
         private List<PokerPlayer> _playerList;
@@ -44,14 +45,16 @@ namespace PokerBot.Services
         private int _currentPlayer;
         private int _playerToMatch;
         private int _call;
+        
 
-        public PokerService(LogService logService)
+        public PokerService(LogService logService, SqlService sqlService)
         {
             _logService = logService;
             _gameState = States.Closed;
             _playerList = new List<PokerPlayer>();
             _foldedPlayers = new List<PokerPlayer>();
             _river = new Card[5];
+            _sqlService = sqlService;
         }
 
         public void Test()
@@ -82,8 +85,15 @@ namespace PokerBot.Services
             try
             {
                 var user = (IGuildUser) context.User;
-                _playerList.Add(new PokerPlayer(user.Id, user.Nickname));
-                _gameState = States.Pregame;
+            var player = await _sqlService.GetPlayerAsync(user.Id);
+            if (player == null)
+            {
+                player = new PokerPlayer(user.Id, user.Nickname);
+                player.GiveMoney(100);
+                await _sqlService.AddPlayerAsync(player);
+            }
+            _playerList.Add(player);
+            _gameState = States.Pregame;
                 await context.Channel.SendMessageAsync(
                     $"New game started! New players can join with \"{Environment.GetEnvironmentVariable("COMMAND_PREFIX")}joingame\" and the game can be started with \"{Environment.GetEnvironmentVariable("COMMAND_PREFIX")}start\"!");
                 _logService.WriteLog(new PokerLog(_gameState, LogObject.Severity.Info, $"Player '{user.Nickname}' has started a new game"));
@@ -127,7 +137,13 @@ namespace PokerBot.Services
             }
             
             var user = (IGuildUser) context.User;
-            var player = new PokerPlayer(user.Id, user.Nickname ?? user.Username);
+            var player = await _sqlService.GetPlayerAsync(user.Id);
+            if (player == null) 
+            {
+                player = new PokerPlayer(user.Id, user.Nickname);
+                player.GiveMoney(100);
+                await _sqlService.AddPlayerAsync(player);
+            }
 
             foreach (var p in _playerList)
             {
@@ -137,7 +153,7 @@ namespace PokerBot.Services
                     return;
                 }
             }
-            
+
             _playerList.Add(player);
             await context.Channel.SendMessageAsync($"Welcome to the game {player.GetName()}!");
             _logService.WriteLog(new PokerLog(_gameState, LogObject.Severity.Info, $"User '{player.GetName()}' has joined the lobby"));
@@ -747,6 +763,20 @@ namespace PokerBot.Services
                         _logService.WriteLog(new PokerLog(_gameState, LogObject.Severity.Info,
                     $"Players '{_playerList[players[0]].GetName()}' and '{_playerList[players[1]].GetName()}' split a pot of {splitPot} each"));
                 }
+
+                for (var i = 0; i < _playerList.Count; i++)
+                {
+                    if (players.Contains(i))
+                    {
+                        _playerList[i].AddWin();
+                    }
+                    else
+                    {
+                        _playerList[i].AddLoss();
+                    }
+                }
+
+                await _sqlService.UpdatePlayersAsync(_playerList);
 
                 _pot = 0;
                 _currentPlayer = 0;

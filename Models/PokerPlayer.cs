@@ -5,9 +5,11 @@ namespace PokerBot.Models
 {
     public class PokerPlayer
     {
-        private ulong id;
-        private string name;
-        private int money;
+        public ulong id { get; set; } 
+        public string name { get; set; } 
+        public int money { get; set; } 
+        public uint wins { get; set; } 
+        public uint losses { get; set; } 
         private int totalCall;
         private HoleHand _holeHand;
         private IDMChannel _dmChannel;
@@ -20,7 +22,18 @@ namespace PokerBot.Models
             var g = Program.GetGuild(ulong.Parse(Environment.GetEnvironmentVariable("GUILD_ID")));
             var u = g.GetUser(id);
             _dmChannel = u.GetOrCreateDMChannelAsync().Result;
-            
+        }
+
+        public PokerPlayer(ulong id, string name, uint wins, uint losses) 
+        {
+            this.id = id;
+            this.name = name;
+            this.wins = wins;
+            this.losses = losses;
+            totalCall = 0;
+            var g = Program.GetGuild(ulong.Parse(Environment.GetEnvironmentVariable("GUILD_ID")));
+            var u = g.GetUser(id);
+            _dmChannel = u.GetOrCreateDMChannelAsync().Result;
         }
 
         public void GiveHand(Card[] cards)
@@ -46,6 +59,26 @@ namespace PokerBot.Models
         public int GetMoney()
         {
             return money;
+        }
+
+        public uint GetWins()
+        {
+            return wins;
+        }
+
+        public uint GetLosses()
+        {
+            return losses;
+        }
+
+        public void AddWin()
+        {
+            wins++;
+        }
+
+        public void AddLoss()
+        {
+            losses++;
         }
 
         public void GiveMoney(int amount)
