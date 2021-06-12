@@ -11,7 +11,7 @@ namespace PokerBot.Models
         {
             foreach (var c in "cshd")
             {
-                for (int i = 1; i <= 13; i++)
+                for (var i = 2; i <= 14; i++)
                 {
                     _cards.Push(new Card(c.ToString(), i));
                 }

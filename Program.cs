@@ -81,8 +81,7 @@ namespace PokerBot
 
             _commands = new CommandService();
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
-            
-            
+
             _client.MessageUpdated += MessageUpdated;
             _client.MessageReceived += HandleCommandAsync;
 
