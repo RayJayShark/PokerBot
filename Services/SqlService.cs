@@ -84,7 +84,7 @@ namespace PokerBot.Services
             connection.Open();
 
             await connection.ExecuteAsync(
-                "UPDATE player SET money = @money, wins = @wins, losses = @losses WHERE discordId = id", players);
+                "UPDATE player SET money = @money, wins = @wins, losses = @losses WHERE discordId = @id", players);
 
             await connection.CloseAsync();
         }
